@@ -14,6 +14,61 @@
             color: #e5e5e5;
         }
 
+        /* ستايل نافذة الاختيار (جوال أو كمبيوتر) */
+        .device-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #d4af37;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            background-color: #d4af37;
+            color: #111;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 120px;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.05);
+        }
+
         header {
             background-color: #1a1a1a;
             border-bottom: 3px solid #d4af37;
@@ -26,6 +81,25 @@
             max-width: 800px;
             margin: 40px auto;
             padding: 20px;
+            text-align: center;
+        }
+
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            border: 2px solid #d4af37;
+            background-color: #1a1a1a;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
             text-align: center;
         }
 
@@ -43,6 +117,10 @@
             border-radius: 12px;
             border: 1px solid #d4af37;
             text-align: center;
+        }
+
+        .product-card.hidden {
+            display: none !important;
         }
 
         .price {
@@ -135,48 +213,39 @@
             font-weight: bold;
         }
 
-        /* ستايل لوحة التحكم الجديدة لإضافة المنتجات */
-        .admin-section {
-            background: #222222;
-            padding: 25px;
-            border-radius: 12px;
-            border: 2px dashed #d4af37;
-            max-width: 500px;
-            margin: 40px auto;
-            text-align: center;
+        /* 📱 وضع الجوال الذكي: يتم تفعيله تلقائياً عند اختيار الجوال لتعديل القياسات */
+        body.mobile-mode .products-container {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+            gap: 12px !important;
+            padding: 5px;
         }
 
-        .admin-section h2 {
-            color: #d4af37;
-            margin-top: 0;
+        body.mobile-mode .product-card {
+            padding: 12px !important;
         }
 
-        .admin-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .admin-inputs input {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #d4af37;
-            background: #111;
-            color: #fff;
+        body.mobile-mode .search-input {
+            width: 95%;
             font-size: 1rem;
         }
 
-        .add-product-btn {
-            background-color: #4CAF50;
-            color: white;
-            width: 100%;
-            padding: 12px;
-            font-size: 1rem;
+        body.mobile-mode main {
+            padding: 10px !important;
+            margin: 10px auto !important;
         }
     </style>
 </head>
 <body>
+
+    <div class="device-modal" id="deviceModal">
+        <div class="modal-content">
+            <h2>اختر نوع جهازك لتصفح أفضل:</h2>
+            <div class="modal-btns">
+                <button class="modal-btn" onclick="setDevice('pc')">💻 كمبيوتر</button>
+                <button class="modal-btn" onclick="setDevice('mobile')">📱 جوال</button>
+            </div>
+        </div>
+    </div>
 
     <header>
         <h1>اسم المؤسسه</h1>
@@ -184,9 +253,13 @@
     </header>
 
     <main>
+        <div class="search-container">
+            <input type="text" id="search-bar" class="search-input" placeholder="🔍 ابحث باسم المنتج أو الكلمات المفتاحية..." oninput="searchProducts()">
+        </div>
+
         <section class="products-container" id="products-wrapper">
             
-            <div class="product-card">
+            <div class="product-card" data-keywords="سريع مشهور افكورو ترند">
                 <h3>افكورو</h3>
                 <p class="price">150 ريال</p>
                 <div class="quantity-selector">
@@ -196,7 +269,7 @@
                 <button onclick="put('افكورو', 150, 'v1')">إضافة للسلة 🛒</button>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-keywords="سريع مشهور تيك توك ترند">
                 <h3>تك توك</h3>
                 <p class="price">90 ريال</p>
                 <div class="quantity-selector">
@@ -206,7 +279,7 @@
                 <button onclick="put('تك توك', 90, 'v2')">إضافة للسلة 🛒</button>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-keywords="بارد شتوي فخم ملكي قماش">
                 <h3>اوكراني</h3>
                 <p class="price">140 ريال</p>
                 <div class="quantity-selector">
@@ -216,7 +289,7 @@
                 <button onclick="put('اوكراني', 140, 'v3')">إضافة للسلة 🛒</button>
             </div>
             
-            <div class="product-card">
+            <div class="product-card" data-keywords="صيني اقتصادي شحن سريع رخيص">
                 <h3>سي واي</h3>
                 <p class="price">90 ريال</p>
                 <div class="quantity-selector">
@@ -226,7 +299,7 @@
                 <button onclick="put('سي واي', 90, 'v4')">إضافة للسلة 🛒</button>
             </div>
         
-             <div class="product-card">
+            <div class="product-card" data-keywords="صيني اقتصادي نسخة جديدة">
                 <h3>سي واي</h3>
                 <p class="price">90 ريال</p>
                 <div class="quantity-selector">
@@ -236,7 +309,7 @@
                 <button onclick="put('سي واي', 90, 'v5')">إضافة للسلة 🛒</button>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-keywords="صيني اقتصادي قديم كلاسيك">
                 <h3>سي واي</h3>
                 <p class="price">90 ريال</p>
                 <div class="quantity-selector">
@@ -259,13 +332,22 @@
             <button class="send-btn" onclick="send()">إرسال الطلب عبر الواتساب 💬</button>
         </section>
 
-        
     </main>
 
     <script>
         let money = 0;
         let active = false;
-        let productCounter = 3; // بدأنا بـ 3 لأن المتجر يحتوي على 3 منتجات افتراضية
+
+        // دالة تحديد الجهاز وضبط القياسات فوراً
+        function setDevice(type) {
+            const modal = document.getElementById('deviceModal');
+            if (type === 'mobile') {
+                document.body.classList.add('mobile-mode'); // تفعيل وضع الجوال المتناسق
+            } else {
+                document.body.classList.remove('mobile-mode'); // تفعيل وضع الكمبيوتر العادي
+            }
+            modal.style.display = 'none'; // إخفاء النافذة بعد الاختيار
+        }
 
         function put(name, num, id) {
             const input = document.getElementById(id);
@@ -291,40 +373,20 @@
             input.value = 1;
         }
 
-        // دالة إضافة منتج جديد ديناميكياً للمتجر
-        function addNewProduct() {
-            const nameInput = document.getElementById('new-name');
-            const priceInput = document.getElementById('new-price');
+        function searchProducts() {
+            const filter = document.getElementById('search-bar').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
 
-            const name = nameInput.value.trim();
-            const price = parseFloat(priceInput.value);
+            cards.forEach(card => {
+                const productName = card.querySelector('h3').textContent.toLowerCase();
+                const keywords = card.getAttribute('data-keywords') ? card.getAttribute('data-keywords').toLowerCase() : '';
 
-            if (name === "" || isNaN(price) || price <= 0) {
-                alert('الرجاء إدخال اسم منتج صحيح وسعر أكبر من الصفر!');
-                return;
-            }
-
-            productCounter++;
-            const newId = 'v' + productCounter;
-
-            const wrapper = document.getElementById('products-wrapper');
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <h3>${name}</h3>
-                <p class="price">${price} ريال</p>
-                <div class="quantity-selector">
-                    <label>العدد:</label>
-                    <input type="number" id="${newId}" value="1" min="1">
-                </div>
-                <button onclick="put('${name}', ${price}, '${newId}')">إضافة للسلة 🛒</button>
-            `;
-
-            wrapper.appendChild(card);
-
-            // تصفير الخانات بعد الإضافة بنجاح
-            nameInput.value = "";
-            priceInput.value = "";
+                if (productName.includes(filter) || keywords.includes(filter)) {
+                    card.classList.remove('hidden'); 
+                } else {
+                    card.classList.add('hidden'); 
+                }
+            });
         }
 
         function send() {
