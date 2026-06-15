@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اقمشة بيرق الجود</title>
+    <title>متجري التجريبي المطور</title>
     
     <style>
         body {
@@ -86,7 +86,7 @@
             border-radius: 12px;
             border: 2px solid #d4af37;
             max-width: 500px;
-            margin: 0 auto;
+            margin: 40px auto;
             text-align: right;
         }
 
@@ -134,17 +134,57 @@
             border: none;
             font-weight: bold;
         }
+
+        /* ستايل لوحة التحكم الجديدة لإضافة المنتجات */
+        .admin-section {
+            background: #222222;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px dashed #d4af37;
+            max-width: 500px;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .admin-section h2 {
+            color: #d4af37;
+            margin-top: 0;
+        }
+
+        .admin-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .admin-inputs input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #d4af37;
+            background: #111;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .add-product-btn {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>بيرق الجود</h1>
+        <h1>مرحباً بك في متجرنا المطور 🚀</h1>
         <p>حدد كمية أي منتج واضغط إضافة للسلة ليتم الحساب تلقائياً</p>
     </header>
 
     <main>
-        <section class="products-container">
+        <section class="products-container" id="products-wrapper">
             
             <div class="product-card">
                 <h3>ساعة ذكية</h3>
@@ -156,45 +196,36 @@
                 <button onclick="put('ساعة ذكية', 150, 'v1')">إضافة للسلة 🛒</button>
             </div>
 
-             <div class="product-card">
-                <h3>ساعة ذكية</h3>
-                <p class="price">150 ريال</p>
+            <div class="product-card">
+                <h3>تك توك</h3>
+                <p class="price">90 ريال</p>
                 <div class="quantity-selector">
                     <label>العدد:</label>
                     <input type="number" id="v2" value="1" min="1">
                 </div>
-                <button onclick="put('ساعة ذكية', 150, 'v2')">إضافة للسلة 🛒</button>
+                <button onclick="put('تك توك', 90, 'v2')">إضافة للسلة 🛒</button>
             </div>
 
-
             <div class="product-card">
-                <h3>سمير اميس</h3>
-                <p class="price">200 ريال</p>
+                <h3>اوكراني</h3>
+                <p class="price">140 ريال</p>
                 <div class="quantity-selector">
                     <label>العدد:</label>
                     <input type="number" id="v3" value="1" min="1">
-                
-
+                </div>
+                <button onclick="put('اوكراني', 140, 'v3')">إضافة للسلة 🛒</button>
+            </div>
+            
             <div class="product-card">
-                <h3>شاحن سريع</h3>
-                <p class="price">50 ريال</p>
+                <h3>سي واي</h3>
+                <p class="price">90 ريال</p>
                 <div class="quantity-selector">
                     <label>العدد:</label>
                     <input type="number" id="v4" value="1" min="1">
                 </div>
-                <button onclick="put('شاحن سريع', 50, 'v4')">إضافة للسلة 🛒</button>
+                <button onclick="put('سي واي', 90, 'v4')">إضافة للسلة 🛒</button>
             </div>
-
-                      <div class="product-card">
-                <h3>اسي واي</h3>
-                <p class="price">90</p>
-                <div class="quantity-selector">
-                    <label>العدد:</label>
-                    <input type="number" id="v5" value="1" min="1">
-                </div>
-                <button onclick="put('اسم المنتج هنا', السعر, 'v5')">إضافة للسلة 🛒</button>
-            </div>
-                      
+            
         </section>
 
         <section class="cart-section">
@@ -208,11 +239,14 @@
             </div>
             <button class="send-btn" onclick="send()">إرسال الطلب عبر الواتساب 💬</button>
         </section>
+
+        
     </main>
 
     <script>
         let money = 0;
         let active = false;
+        let productCounter = 3; // بدأنا بـ 3 لأن المتجر يحتوي على 3 منتجات افتراضية
 
         function put(name, num, id) {
             const input = document.getElementById(id);
@@ -238,14 +272,50 @@
             input.value = 1;
         }
 
+        // دالة إضافة منتج جديد ديناميكياً للمتجر
+        function addNewProduct() {
+            const nameInput = document.getElementById('new-name');
+            const priceInput = document.getElementById('new-price');
+
+            const name = nameInput.value.trim();
+            const price = parseFloat(priceInput.value);
+
+            if (name === "" || isNaN(price) || price <= 0) {
+                alert('الرجاء إدخال اسم منتج صحيح وسعر أكبر من الصفر!');
+                return;
+            }
+
+            productCounter++;
+            const newId = 'v' + productCounter;
+
+            const wrapper = document.getElementById('products-wrapper');
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <h3>${name}</h3>
+                <p class="price">${price} ريال</p>
+                <div class="quantity-selector">
+                    <label>العدد:</label>
+                    <input type="number" id="${newId}" value="1" min="1">
+                </div>
+                <button onclick="put('${name}', ${price}, '${newId}')">إضافة للسلة 🛒</button>
+            `;
+
+            wrapper.appendChild(card);
+
+            // تصفير الخانات بعد الإضافة بنجاح
+            nameInput.value = "";
+            priceInput.value = "";
+        }
+
         function send() {
             if (money === 0) {
                 alert('الرجاء إضافة منتجات أولاً!');
                 return;
             }
 
-            const phone = "966530984099"; 
-            let msg = "السلام عليكم ورحمة الله وبركاته، لقد طلبت المنتجات التالية:\n\n";
+            const phone = "966500000000"; 
+            let msg = "مرحباً، أريد طلب المنتجات التالية:\n\n";
             
             const all = document.querySelectorAll('#box-list li');
             let n = 1;
